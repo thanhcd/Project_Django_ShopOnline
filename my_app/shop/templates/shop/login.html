@@ -59,8 +59,9 @@
 
 <div>
     <!-- Sử dụng một thẻ form và bảo vệ CSRF token -->
-    <form method="POST">
+    <form method="POST" action="">
         <section class="login-section">
+            {% csrf_token %}
             <h1>Đăng nhập</h1>
             <div class="input-group">
                 <label>Tên đăng nhập:</label>
@@ -72,9 +73,12 @@
             </div>
             <button type="submit">Đăng nhập</button>
             <p>Haven't signed up yet?</p>
+            <a href="{% url 'register' %}">Sign up</a>
+
         </section>
     </form>
 
 </div>
+
 
 {% endblock content %}

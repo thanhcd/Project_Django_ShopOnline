@@ -1,1 +1,11 @@
-<h1>home page</h1>
+<body>
+    <h1>Home Page</h1>
+    {% if request.user.is_authenticated %}
+        <p>Xin chào, {{ request.user.username }}!</p>
+        <a href="{% url 'logout' %}">Đăng xuất</a>
+    {% else %}
+        <p>Bạn chưa đăng nhập.</p>
+        <a href="{% url 'login' %}">Đăng nhập</a>
+    {% endif %}
+</body>
+</html>
