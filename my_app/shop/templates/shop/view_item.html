@@ -1,0 +1,29 @@
+<!-- product_card.html -->
+{% extends 'main.html' %}
+
+{% block content %}
+{% include 'navbar.html' %}
+{% load static %}
+
+<!-- product_card.html -->
+<div class="product-card">
+    <div class="img-box">
+        {% if item.image %}
+            <img src="{{ item.image.url }}" alt="{{ item.name }}">
+        {% else %}
+            <img src="{% static 'images/placeholder.jpg' %}" alt="Placeholder">
+        {% endif %}
+    </div>
+    <div class="detail-box">
+        <h6>{{ item.name }}</h6>
+        <h6>
+            Price
+            <span>${{ item.price }}</span>
+        </h6>
+    </div>
+    <!-- <a href="{% url 'view-item' item.pk %}" class="btn btn-primary">View Details</a> -->
+</div>
+
+
+
+{% endblock content %}

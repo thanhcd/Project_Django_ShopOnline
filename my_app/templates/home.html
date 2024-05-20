@@ -26,13 +26,21 @@
             <h2>Danh sách các mặt hàng:</h2>
             <ul>
                 {% for item in items %}
-                <li>Tên mặt hàng: {{ item.name }} - Giá: {{ item.price }}</li>
-                {% if item.image %}
-                <img src="{{ item.image.url }}" alt="{{ item.name }}">
-                {% else %}
-                <p>No image available</p>
-                {% endif %}
-                <li>{{ item.description }}</li>
+                <li>
+                    <!-- Tạo liên kết tới trang cập nhật của mỗi sản phẩm -->
+                    <a href="{% url 'update-item' item.pk %}">{{ item.name }} </a> 
+                    <br>
+                    <a>- User {{ item.host }}</a>
+                    <br>
+                    <a>- Giá: {{ item.price }}</a>
+                    {% if item.image %}
+                    <img src="{{ item.image.url }}" alt="{{ item.name }}">
+                    {% else %}
+                    <p>No image available</p>
+                    {% endif %}
+                    <li>{{ item.description }}</li>
+                    <a href="{% url 'view-item' item.pk %}">view</a>
+                </li>
                 <hr>
                 {% endfor %}
             </ul>
