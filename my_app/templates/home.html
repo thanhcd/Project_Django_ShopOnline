@@ -1,11 +1,43 @@
+{% include 'navbar.html' %}
+
+
+<style>
+    .home-container {
+        display: grid;
+        grid-template-columns: 1fr 3fr;
+    }
+</style>
+
 <body>
-    <h1>Home Page</h1>
-    {% if request.user.is_authenticated %}
-        <p>Xin chào, {{ request.user.username }}!</p>
-        <a href="{% url 'logout' %}">Đăng xuất</a>
-    {% else %}
-        <p>Bạn chưa đăng nhập.</p>
-        <a href="{% url 'login' %}">Đăng nhập</a>
-    {% endif %}
+    <div class="home-container">
+        <div>
+            <h1>Home Page</h1>
+            {% if request.user.is_authenticated %}
+            <p>Xin chào, {{ request.user.username }}!</p>
+            <a href="{% url 'create-items' %}">Create item</a>
+            <a href="{% url 'logout' %}">Đăng xuất</a>
+
+            {% else %}
+            <p>Bạn chưa đăng nhập.</p>
+            <a href="{% url 'login' %}">Đăng nhập</a>
+            {% endif %}
+        </div>
+        <div>
+            <h2>Danh sách các mặt hàng:</h2>
+            <ul>
+                {% for item in items %}
+                <li>Tên mặt hàng: {{ item.name }} - Giá: {{ item.price }}</li>
+                {% if item.image %}
+                <img src="{{ item.image.url }}" alt="{{ item.name }}">
+                {% else %}
+                <p>No image available</p>
+                {% endif %}
+                <li>{{ item.description }}</li>
+                <hr>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
 </body>
+
 </html>

@@ -1,18 +1,36 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
-from .forms import SignUpForm  
+from .forms import SignUpForm, ItemsForm  
 from django.contrib.auth import authenticate, login, logout
-
+from django.contrib.auth.decorators import login_required
+from .models import Items
+from django.conf import settings
+from django.core.files.storage import FileSystemStorage
+import os
 
 # Create your views here.
 def home(request):
-    return render(request, 'home.html')
+    items = Items.objects.all()
+    context = {'items' :items}
+    return render(request, 'home.html', context)
 
 
-def room(request):
-    return HttpResponse('room.html')
-
-
+@login_required(login_url='login')
+def createItems(request):
+    if request.method == 'POST':
+        form = ItemsForm(request.POST, request.FILES)
+        if form.is_valid():
+            item = form.save(commit=False)
+            if 'image' in request.FILES:
+                image = request.FILES['image']
+                fs = FileSystemStorage(location=settings.MEDIA_ROOT)
+                filename = fs.save(image.name, image)
+                item.image = os.path.join(settings.MEDIA_URL, filename)
+            item.save()
+            return redirect('home')
+    else:
+        form = ItemsForm()
+    return render(request, 'shop/item.html', {'form': form})
 
 
 def indexPage(request):
@@ -29,7 +47,7 @@ def registerPage(request):
             form.save()
             return redirect('login') # Chuyển hướng đến trang thông báo đăng ký thành công
     else:
-        form = SignUpForm()
+        form = SignUpForm() 
     return render(request, 'shop/register.html', {'form': form})  # Truyền form vào template
 
 
@@ -50,7 +68,6 @@ def loginPage(request):
         # Nếu không phải là POST request, hiển thị trang đăng nhập
         return render(request, 'shop/login.html')
     
-
 
 def logoutUser(request):
     logout(request)
