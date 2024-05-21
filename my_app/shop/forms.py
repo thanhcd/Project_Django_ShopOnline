@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
-from .models import Items
+from .models import Item
 
 
 class SignUpForm(UserCreationForm):
@@ -14,6 +14,6 @@ class SignUpForm(UserCreationForm):
 
 class ItemsForm(forms.ModelForm):
     class Meta:
-        model = Items
+        model = Item
         fields = '__all__'
-        exclude = ['host', 'participants']
+        # exclude = ['host']

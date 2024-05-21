@@ -3,14 +3,13 @@ from django.http import HttpResponse
 from .forms import SignUpForm, ItemsForm  
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
-from .models import Items
+from .models import Item
 from django.conf import settings
-from django.core.files.storage import FileSystemStorage
-import os
+
 
 # Create your views here.
 def home(request):
-    items = Items.objects.all()
+    items = Item.objects.all()
     context = {'items' :items}
     return render(request, 'home.html', context)
 
@@ -25,15 +24,15 @@ def createItems(request):
             item = form.save(commit=False)
             item.host = request.user
             item.save()
-            return redirect('home')  # Đảm bảo rằng tên 'home' được sử dụng chính xác
-    context = {'form': form}
+            return redirect('home')
+        
+    context = {'form':form}
     return render(request, 'shop/item.html', context)
-
 
 
 @login_required(login_url='login')
 def update_item(request, pk):
-    item = Items.objects.get(id=pk)
+    item = Item.objects.get(id=pk)
     if request.user != item.host:
         return HttpResponse('you are not allow here!!')
 
@@ -49,7 +48,7 @@ def update_item(request, pk):
 
 @login_required(login_url='login')
 def delete_item(request, pk):
-    item = Items.objects.get(id=pk) 
+    item = Item.objects.get(id=pk) 
 
     # Kiểm tra xem người dùng có phải là người tạo mục không
     if request.user != item.host:
@@ -61,8 +60,10 @@ def delete_item(request, pk):
         return redirect('home')
     return render(request, 'shop/delete_item.html', {'obj':item})
 
+
+
 def view_item(request, pk):
-    item = Items.objects.get(id=pk)
+    item = Item.objects.get(id=pk)
     return render(request, 'shop/view_item.html', {'item': item})
 
 
