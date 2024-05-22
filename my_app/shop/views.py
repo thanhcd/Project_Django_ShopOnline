@@ -78,7 +78,7 @@ def createItems(request):
             item = form.save(commit=False)
             item.host = request.user
             item.save()
-            return redirect('shop/home')
+            return redirect('home')
         
     context = {'form':form}
     return render(request, 'shop/item.html', context)

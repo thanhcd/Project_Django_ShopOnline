@@ -1,69 +1,142 @@
-<!-- shop/view_item.html -->
 {% extends 'main.html' %}
 
 {% block content %}
 {% include 'navbar.html' %}
 {% load static %}
-
 <style>
-    .view-container {
-        margin: auto;
-        width: 50%;
-        border: 3px solid green;
-        padding: 10px;
-        display: grid;
-        grid-template-columns: 1fr 3fr;
-        justify-content: center; /* Canh giữa theo chiều ngang */
-        align-items: center; /* Canh giữa theo chiều dọc */
+    .container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      max-width: 900px;
+      margin: 0 auto;
     }
+  
+    .product-row {
+      display: flex;
+      flex-wrap: wrap; /* Allow items to wrap on smaller screens */
+    }
+  
+    .product-card {
+      display: flex;
+      flex-direction: column;
+      background-color: #fff;
+      border-radius: 4px;
+      box-shadow: 4px 4px 10px rgba(128, 128, 128, 0.2);
+      margin: 10px;
+      width: 48%; /* Adjusted width for two cards per row */
+    }
+  
+    .product-card img {
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+      width: 100%; /* Stretch image to full column width */
+      height: 400px; /* Set fixed height for image */
+      object-fit: cover; /* Preserve aspect ratio while covering the container */
+    }
+  
+    .product-card .detail-box {
+      padding: 10px;
+      flex: 1; /* Allows detail box to grow and fill remaining space */
+    }
+  
+    .product-card .detail-box h6 {
+      margin-top: 0;
+      font-weight: bold;
+    }
+  
+    .product-card .detail-box .price {
+      color: #f00;
+      margin-bottom: 5px;
+    }
+  
+    .empty-column {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      width: 48%; /* Adjusted width to match product card */
+      border: 1px solid #ddd; /* Optional border for distinction */
+      padding: 10px; /* Optional padding for content spacing */
+      height: 400px; /* Set fixed height for empty column */
+    }
+  
+    .empty-column h1 {
+      margin: 0;
+    }
+  
+    .message-section {
+      margin-top: 20px;
+      width: 100%;
+    }
+  
+    .message-section h3 {
+      margin-bottom: 10px;
+    }
+  
+    .message-form {
+      margin-bottom: 10px;
+    }
+  
+    /* Responsive styles */
+    @media (max-width: 768px) {
+      .product-card {
+        width: 100%; /* Full width for smaller screens */
+      }
+  
+      .empty-column {
+        display: none; /* Hide empty column on smaller screens */
+      }
+    }
+  </style>
 
-    /* Áp dụng grid-template-columns cho phần tử .detail-box */
-</style>
-<!-- shop/view_item.html -->
-
-<div class="view-container">
-    <div class="product-card">
-        <div class="img-box">
-            {% if item.image %}
-            <img src="{{ item.image.url }}" alt="{{ item.name }}">
-            {% else %}
-            <img src="{% static 'images/placeholder.jpg' %}" alt="Placeholder">
-            {% endif %}
+<div class="container">
+    <div class="product-row">
+        <div class="product-card">
+            <div class="img-box">
+                {% if item.image %}
+                <img src="{{ item.image.url }}" alt="{{ item.name }}">
+                {% else %}
+                <img src="{% static 'images/placeholder.jpg' %}" alt="Placeholder">
+                {% endif %}
+            </div>
+            <div class="detail-box">
+                <h6>{{ item.name }}</h6>
+                <p class="price">Price: $<span>{{ item.price }}</span></p>
+            </div>
         </div>
-        <div class="detail-box">
-            <h6>{{ item.name }}</h6>
-            <h6>
-                Price
-                <span>${{ item.price }}</span>
-            </h6>
-            <!-- Form để gửi message -->
+        <div class="empty-column">
+            <p>{{item.description}}</p>
+            <h1>Đây là chỗ để cart</h1>
+        </div>
+    </div>
+
+    <div class="message-section">
+        <div class="message-form">
             <form method="POST" action="{% url 'item' item.pk %}">
                 {% csrf_token %}
                 <input type="text" name="body" placeholder="Type your message here">
                 <button type="submit">Send Message</button>
             </form>
-            <!-- Danh sách các message -->
-            <div>
-                <h3>Messages:</h3>
-                <ul>
-                    {% for message in item_messages %}
-                    <li>Name: {{ message.user }}</li>
-                    <li>Message: {{ message.body }}</li>
-                    {% if message.user == request.user %}
-                    <!-- Nếu người dùng là tác giả của message, hiển thị nút Delete -->
-                    <form method="POST" action="{% url 'delete-message' message.pk %}">
-                        {% csrf_token %}
-                        <button type="submit">Delete</button>
-                    </form>
-                    {% endif %}
-                    <hr>
-                    {% endfor %}
-                </ul>
-            </div>
         </div>
+        <h3>Messages:</h3>
+        <ul>
+            {% for message in item_messages %}
+            <li>Name: {{ message.user }}</li>
+            <li>Message: {{ message.body }}</li>
+            {% if message.user == request.user %}
+            <form method="POST" action="{% url 'delete-message' message.pk %}">
+                {% csrf_token %}
+                <button type="submit">Delete</button>
+            </form>
+            {% endif %}
+            <hr>
+            {% endfor %}
+        </ul>
+
     </div>
 </div>
 {% endblock content %}
-
-
-
