@@ -1,29 +1,69 @@
-<!-- product_card.html -->
+<!-- shop/view_item.html -->
 {% extends 'main.html' %}
 
 {% block content %}
 {% include 'navbar.html' %}
 {% load static %}
 
-<!-- product_card.html -->
-<div class="product-card">
-    <div class="img-box">
-        {% if item.image %}
+<style>
+    .view-container {
+        margin: auto;
+        width: 50%;
+        border: 3px solid green;
+        padding: 10px;
+        display: grid;
+        grid-template-columns: 1fr 3fr;
+        justify-content: center; /* Canh giữa theo chiều ngang */
+        align-items: center; /* Canh giữa theo chiều dọc */
+    }
+
+    /* Áp dụng grid-template-columns cho phần tử .detail-box */
+</style>
+<!-- shop/view_item.html -->
+
+<div class="view-container">
+    <div class="product-card">
+        <div class="img-box">
+            {% if item.image %}
             <img src="{{ item.image.url }}" alt="{{ item.name }}">
-        {% else %}
+            {% else %}
             <img src="{% static 'images/placeholder.jpg' %}" alt="Placeholder">
-        {% endif %}
+            {% endif %}
+        </div>
+        <div class="detail-box">
+            <h6>{{ item.name }}</h6>
+            <h6>
+                Price
+                <span>${{ item.price }}</span>
+            </h6>
+            <!-- Form để gửi message -->
+            <form method="POST" action="{% url 'item' item.pk %}">
+                {% csrf_token %}
+                <input type="text" name="body" placeholder="Type your message here">
+                <button type="submit">Send Message</button>
+            </form>
+            <!-- Danh sách các message -->
+            <div>
+                <h3>Messages:</h3>
+                <ul>
+                    {% for message in item_messages %}
+                    <li>Name: {{ message.user }}</li>
+                    <li>Message: {{ message.body }}</li>
+                    {% if message.user == request.user %}
+                    <!-- Nếu người dùng là tác giả của message, hiển thị nút Delete -->
+                    <form method="POST" action="{% url 'delete-message' message.pk %}">
+                        {% csrf_token %}
+                        <button type="submit">Delete</button>
+                    </form>
+                    {% endif %}
+                    <hr>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
     </div>
-    <div class="detail-box">
-        <h6>{{ item.name }}</h6>
-        <h6>
-            Price
-            <span>${{ item.price }}</span>
-        </h6>
-    </div>
-    <!-- <a href="{% url 'view-item' item.pk %}" class="btn btn-primary">View Details</a> -->
 </div>
-
-
-
 {% endblock content %}
+
+
+
