@@ -8343,7 +8343,7 @@ button.bg-dark:focus {
 
 .ml-auto,
 .mx-auto {
-  margin-left: auto !important;
+  margin-left: auto ;
 }
 
 @media (min-width: 576px) {
@@ -10035,4 +10035,3 @@ a.text-dark:hover, a.text-dark:focus {
     border-color: #dee2e6;
   }
 }
-/*# sourceMappingURL=bootstrap.css.map */

@@ -12,15 +12,8 @@
     <div class="home-container">
         <div>
             <h1>Home Page</h1>
-            {% if request.user.is_authenticated %}
-            <p>Xin chào, {{ request.user.username }}!</p>
-            <a href="{% url 'create-items' %}">Create item</a>
-            <a href="{% url 'logout' %}">Đăng xuất</a>
-
-            {% else %}
-            <p>Bạn chưa đăng nhập.</p>
-            <a href="{% url 'login' %}">Đăng nhập</a>
-            {% endif %}
+            
+            {% include 'shop/topics_component.html' %}
         </div>
         <div>
             <h2>Danh sách các mặt hàng:</h2>
@@ -28,7 +21,7 @@
                 {% for item in items %}
                 <li>
                     <!-- Tạo liên kết tới trang cập nhật của mỗi sản phẩm -->
-                    <a href="{% url 'update-item' item.pk %}">{{ item.name }} </a> 
+                    <a href="{% url 'update-item' item.pk %}">{{ item.name }} {{ item.topic}} </a> 
                     <br>
                     <a>- User {{ item.host }}</a>
                     <br>
