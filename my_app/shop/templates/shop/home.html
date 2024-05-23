@@ -12,15 +12,7 @@
     <div class="home-container">
         <div>
             <h1>Home Page</h1>
-            {% if request.user.is_authenticated %}
-            <p>Xin chào, {{ request.user.username }}!</p>
-            <a href="{% url 'create-items' %}">Create item</a>
-            <a href="{% url 'logout' %}">Đăng xuất</a>
-
-            {% else %}
-            <p>Bạn chưa đăng nhập.</p>
-            <a href="{% url 'login' %}">Đăng nhập</a>
-            {% endif %}
+            
             {% include 'shop/topics_component.html' %}
         </div>
         <div>

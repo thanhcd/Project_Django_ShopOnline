@@ -30,6 +30,9 @@ def home(request):
     context = {'items': items, 'topics': topics}
     return render(request, 'shop/home.html', context)
 
+
+
+
 # def item(request, pk):
 #     item = Item.objects.get(id=pk)
 #     item_messages = item.message_set.all()
@@ -73,12 +76,12 @@ def createItems(request):
     form = ItemsForm()
 
     if request.method == 'POST':
-        form = ItemsForm(request.POST)
+        form = ItemsForm(request.POST, request.FILES)
         if form.is_valid():
             item = form.save(commit=False)
             item.host = request.user
             item.save()
-            return redirect('home')
+            return redirect('shop')
         
     context = {'form':form}
     return render(request, 'shop/item.html', context)
@@ -94,7 +97,7 @@ def update_item(request, pk):
         form = ItemsForm(request.POST, request.FILES, instance=item)
         if form.is_valid():
             form.save()
-            return redirect('home')
+            return redirect('shop')
     else:
         form = ItemsForm(instance=item)
     return render(request, 'shop/update_item.html', {'form': form, 'item': item})
@@ -143,9 +146,10 @@ def indexPage(request):
     return render(request, 'shop/index.html')
 
 def shopPage(request):
-    return render(request, 'shop/shop.html')
+    items = Item.objects.all()
 
-
+    context = {'items': items}
+    return render(request, 'shop/shop.html', context)
 
 
 

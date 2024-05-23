@@ -1,4 +1,42 @@
-<a href="{% url 'home' %}">
-    <h1>logo</h1>
-</a>
+<div class="flex-container">
+    <a href="{% url 'home' %}" style="margin-left :10px;">
+        <h1>logo</h1>
+    </a>
+
+    <div class="user-options">
+        {% if request.user.is_authenticated %}
+        <p>Xin chào, {{ request.user.username }}!</p>
+        <a href="{% url 'create-items' %}">Create item</a>
+        <a href="{% url 'logout' %}">Đăng xuất</a>
+
+        {% else %}
+        <p>Bạn chưa đăng nhập.</p>
+        <a href="{% url 'login' %}">Đăng nhập</a>
+        {% endif %}
+    </div>
+</div>
 <hr>
+<style>
+    /* Đặt container chứa các phần tử vào Flexbox */
+    .flex-container {
+        text-align: center;
+        display: flex;
+        align-items: center;
+        /* Căn giữa theo chiều dọc */
+    }
+
+    /* Khoảng cách giữa các phần tử */
+    .flex-container>* {
+        margin-right: 20px;
+        margin-left:auto;
+        /* Điều chỉnh khoảng cách nếu cần */
+    }
+
+    /* Thêm một lớp để căn chỉnh phần tử */
+    .user-options p {
+        margin: 0;
+        /* Loại bỏ khoảng cách mặc định */
+        margin-right: 10px;
+        /* Khoảng cách giữa đoạn văn và các liên kết */
+    }
+</style>
