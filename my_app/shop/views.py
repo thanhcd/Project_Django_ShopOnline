@@ -204,3 +204,8 @@ def api_login(request):
 def logoutUser(request):
     logout(request)
     return redirect('login')  # Chuyển hướng người dùng đến trang chính sau khi đăng xuất
+
+
+
+def cc(request):
+    return HttpResponse("co cai con cac")
