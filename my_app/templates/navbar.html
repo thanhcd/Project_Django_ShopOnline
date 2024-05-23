@@ -2,7 +2,9 @@
     <a href="{% url 'home' %}" style="margin-left :10px;">
         <h1>logo</h1>
     </a>
-
+    <a href="{% url 'shop' %}" style="margin-left :10px;">
+        <h1>Shop</h1>
+    </a>
     <div class="user-options">
         {% if request.user.is_authenticated %}
         <p>Xin chào, {{ request.user.username }}!</p>
