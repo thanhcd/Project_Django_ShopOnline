@@ -52,3 +52,12 @@ window.addEventListener('DOMContentLoaded', event => {
     });
 
 });
+
+
+// Sử dụng JavaScript để xử lý sự kiện click cho nút "Clear"
+document.querySelector('.clear-image').addEventListener('click', function() {
+    var imageInput = document.getElementById('image');
+    imageInput.value = ''; // Xóa giá trị của input file
+    var imagePreview = document.querySelector('.update-item-form img');
+    imagePreview.src = ''; // Xóa hình ảnh hiển thị
+});

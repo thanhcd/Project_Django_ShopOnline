@@ -328,6 +328,7 @@ a:focus {
 }
 
 .shop_section .box {
+  border-radius: 15px;
   background-color: #eeeeee;
   position: relative;
   padding: 10px;
@@ -353,6 +354,7 @@ a:focus {
 }
 
 .shop_section .box .img-box img {
+  border-radius: 20px;
   max-width: 100%;
   max-height: 145px;
 }
@@ -860,12 +862,12 @@ a:focus {
 
 
 .img-box {
-  border: 2px solid #ccc;
-  /* Màu và độ dày của đường viền */
+  /* border: 2px solid #ccc; */
+
   border-radius: 5px;
-  /* Độ cong của góc */
+
   overflow: hidden;
-  /* Đảm bảo hình ảnh không vượt ra ngoài phần border */
+
 }
 
 .img-box img {
