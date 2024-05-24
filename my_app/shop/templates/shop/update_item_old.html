@@ -1,0 +1,15 @@
+{% include 'navbar.html' %}
+
+{% block content %}
+<body>
+    <h1>Update Item</h1>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Update</button>
+        <a href="{% url 'delete-item' item.pk %}" class="btn btn-danger">Delete item</a>
+    </form>
+</body>
+
+{% endblock content %}
+

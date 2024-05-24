@@ -1,15 +1,118 @@
-{% include 'navbar.html' %}
-
+{% extends 'main.html' %}
 {% block content %}
-<body>
-    <h1>Update Item</h1>
-    <form method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Update</button>
-        <a href="{% url 'delete-item' item.pk %}" class="btn btn-danger">Delete item</a>
-    </form>
-</body>
+{% load static %}
+<h2 style="text-align: center;">Update item</h2>
+<div class="container">
+    <div class="update-item-form">
+        <form method="post" enctype="multipart/form-data" class="item-form">
+            {% csrf_token %}
+            <div class="sec-1">
+                <p>Host: {{ form.host }} -- Topic: {{ form.topic }}</p>
+                
+                <p>Name: {{ form.name }}</p>
+                <p>Price: {{ form.price }}</p>
+            </div>
+            <div class="sec-2">
+                {{ form.image }}
+                {{ form.description }}
+                <!-- {{ form.participants }} -->
+            </div>
+            <button type="submit" class="btn-submit">Update</button>
+            <a href="{% url 'delete-item' item.pk %}" class="btn-delete">Delete item</a>
+        </form>
+    </div>
+</div>
 
+<style>
+    .container {
+        margin: auto;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    .container .update-item-form .sec-1{
+        /* display: ruby; */
+    } 
+
+    .update-item-form {
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+        background-color: #fff;
+    }
+
+    label {
+        display: block;
+        font-weight: bold;
+    }
+
+    input[type="text"],
+    textarea {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+    }
+
+    img {
+        max-width: 200px;
+        margin-bottom: 10px;
+    }
+
+    .clear-image {
+        padding: 5px 10px;
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    .btn-submit {
+        display: inline-block;
+        padding: 10px 20px;
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    .btn-delete {
+        display: inline-block;
+        padding: 10px 20px;
+        background-color: #dc3545;
+        color: #fff;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        text-decoration: none;
+    }
+
+    .btn-submit:hover,
+    .btn-delete:hover {
+        background-color: #0056b3;
+    }
+
+    /* New styles */
+    .update-item-form .container {
+        display: flex;
+    }
+
+    .update-item-form .container p {
+        display: inline-block;
+        width: 48%;
+        /* Điều chỉnh độ rộng nếu cần */
+        margin-right: 2%;
+        /* Thêm khoảng cách giữa các trường */
+    }
+
+    .update-item-form .container div {
+        width: 48%;
+        /* Adjust the width as needed */
+        padding: 10px;
+    }
+</style>
 {% endblock content %}
-
