@@ -4,6 +4,8 @@
 <style>
     .login-section {
         background-color: #fff;
+        background: linear-gradient(to bottom, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.5) 75%, #000 100%), url("../assets/img/bg-masthead.jpg");
+
         padding: 30px;
         border-radius: 10px;
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
@@ -63,7 +65,7 @@
     <form method="POST" action="">
         <section class="login-section">
             {% csrf_token %}
-            <h1>Đăng nhập</h1>
+            <h1>Login</h1>
             <div class="input-group">
                 <label>Tên đăng nhập:</label>
                 <input type="text" id="username" name="username" placeholder="Enter username">
