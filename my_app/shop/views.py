@@ -21,15 +21,14 @@ from .models import Item, Topic, Message
 
 def home(request):
     q = request.GET.get('q', '')
-    items = Item.objects.all()
 
     if q:
-        items = items.filter(topic__name__icontains=q)
+        return redirect('shopPage') + f'?q={q}'
 
+    items = Item.objects.all()
     topics = Topic.objects.all()
     context = {'items': items, 'topics': topics}
     return render(request, 'shop/home.html', context)
-
 
 
 
@@ -146,9 +145,14 @@ def indexPage(request):
     return render(request, 'shop/index.html')
 
 def shopPage(request):
+    q = request.GET.get('q', '')
     items = Item.objects.all()
 
-    context = {'items': items}
+    if q:
+        items = items.filter(topic__name__icontains=q)
+
+    topics = Topic.objects.all()
+    context = {'items': items, 'topics': topics}
     return render(request, 'shop/shop.html', context)
 
 
