@@ -870,9 +870,3 @@ a:focus {
 
 }
 
-.img-box img {
-  width: 100%;
-  /* Đảm bảo hình ảnh điền đầy toàn bộ phần border */
-  height: auto;
-  /* Chiều cao tự động tính toán để không làm biến dạng hình ảnh */
-}
