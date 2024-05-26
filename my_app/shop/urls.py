@@ -22,6 +22,11 @@ urlpatterns = [
     path('item/<str:pk>/', views.item, name = "item"),
     path('index/', views.indexPage, name = "index"),
     path('shop/', views.shopPage, name = "shop"),
-    
 
+    path('shop/', views.shopPage, name = "shop"),
+    path('cart/', views.cart_detail, name='cart_detail'),
+    path('cart/add/<int:pk>/', views.add_to_cart, name='add_to_cart'),
+    
+    # path('checkout/', views.checkout, name='checkout'),
+    # path('checkout/success/', views.checkout_success, name='checkout_success'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

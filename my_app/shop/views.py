@@ -1,18 +1,18 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
-from .forms import SignUpForm, ItemsForm  
+from .forms import SignUpForm, ItemsForm  ,CartItemUpdateForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
-from .models import Item, Topic, Message
+from .models import Item, Topic, Message, Cart, CartItem
 from django.conf import settings
 from django.contrib.auth import authenticate, login
 
-
+from django.http import JsonResponse
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 from django.contrib.auth import authenticate, login
-
+from django.shortcuts import get_object_or_404
 
 
 # views.py
@@ -213,3 +213,50 @@ def logoutUser(request):
 
 def cc(request):
     return HttpResponse("co cai con cac")
+
+
+
+@login_required(login_url='login')
+def add_to_cart(request, pk):
+    item = get_object_or_404(Item, id=pk)
+    quantity = int(request.POST.get('quantity', 1))
+    cart, created = Cart.objects.get_or_create(user=request.user)
+    cart_item, created = CartItem.objects.get_or_create(cart=cart, item=item)
+    
+    if not created:
+        cart_item.quantity += quantity
+    else:
+        cart_item.quantity = quantity
+    cart_item.save()
+
+    if request.headers.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest':
+        return JsonResponse({'message': 'Item added to cart successfully!'})
+    return redirect('cart_detail')
+
+
+
+@login_required(login_url='login')
+def cart_detail(request):
+    cart, created = Cart.objects.get_or_create(user=request.user)
+    if request.method == 'POST':
+        form = CartItemUpdateForm(request.POST)
+        if form.is_valid():
+            cart_item_id = request.POST.get('cart_item_id')
+            cart_item = CartItem.objects.GET(id=cart_item_id)
+            cart_item.quantity = form.cleaned_data['quantity']
+            cart_item.save()
+            return redirect('cart_detail')
+    return render(request, 'shop/cart_detail.html', {'cart': cart})
+
+# @login_required
+# def checkout(request):
+#     cart, created = Cart.objects.get_or_create(user=request.user)
+#     if request.method == 'POST':
+#         cart.items.all().delete()
+#         cart.delete()
+#         return redirect('checkout_success')
+#     return render(request, 'checkout.html', {'cart': cart})
+
+# @login_required
+# def checkout_success(request):
+#     return render(request, 'checkout_success.html')

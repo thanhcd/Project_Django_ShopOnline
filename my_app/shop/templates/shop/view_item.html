@@ -201,16 +201,16 @@
             <button type="button" class="btn btn-default btn-sm" id="decrease">
               <span class="glyphicon glyphicon-minus"></span>
             </button>
-            <input type="number" id="quantity" value="1" min="1" style="width: 50px; text-align: center;">
+            <input type="number" id="quantity" value="1" min="1" step="1" style="width: 50px; text-align: center;">
             <button type="button" class="btn btn-default btn-sm" id="increase">
               <span class="glyphicon glyphicon-plus"></span>
             </button>
-            <button type="button" class="btn btn-default btn-sm">
+            <button type="button" class="btn btn-default btn-sm" id="add-to-cart" data-item-id="{{ item.id }}">
               <span class="glyphicon glyphicon-shopping-cart"></span>
               <b> Add to Cart </b>
             </button>
           </p>
-        </div>
+        </div>        
       </div>
 
     </div>
@@ -250,17 +250,41 @@
 </div>
 
 
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script>
-  document.getElementById('decrease').onclick = function () {
-    var quantity = document.getElementById('quantity');
-    if (quantity.value > 1) {
-      quantity.value = parseInt(quantity.value) - 1;
-    }
-  };
+$(document).ready(function() {
+    $('#increase').click(function() {
+        let quantity = parseInt($('#quantity').val());
+        $('#quantity').val(quantity + 1);
+    });
 
-  document.getElementById('increase').onclick = function () {
-    var quantity = document.getElementById('quantity');
-    quantity.value = parseInt(quantity.value) + 1;
-  };
+    $('#decrease').click(function() {
+        let quantity = parseInt($('#quantity').val());
+        if (quantity > 1) {
+            $('#quantity').val(quantity - 1);
+        }
+    });
+
+    $('#add-to-cart').click(function() {
+        let itemId = $(this).data('item-id');
+        let quantity = $('#quantity').val();
+
+        $.ajax({
+            url: "{% url 'add_to_cart' 0 %}".replace('0', itemId),
+            method: 'POST',
+            data: {
+                'quantity': quantity,
+                'csrfmiddlewaretoken': '{{ csrf_token }}'
+            },
+            success: function(response) {
+                alert("Item added to cart successfully!");
+            },
+            error: function(response) {
+                alert("Failed to add item to cart.");
+            }
+        });
+    });
+});
 </script>
+
 {% endblock content %}
