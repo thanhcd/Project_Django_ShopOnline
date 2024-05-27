@@ -14,6 +14,7 @@ class Item(models.Model):
     topic = models.ForeignKey(Topic, on_delete=models.SET_NULL, null=True)
     name = models.CharField(max_length=100)
     price = models.DecimalField(max_digits=20, decimal_places=2)
+    sale_price = models.DecimalField(max_digits=20, decimal_places=2, null=True, blank=True)
     image = models.ImageField(upload_to='items/', null=True, blank=True)
     description = models.TextField(null=True, blank=True)
     participants = models.ManyToManyField(User, related_name='participants', blank=True)
@@ -50,13 +51,18 @@ class Cart(models.Model):
     def __str__(self):
         return f"Cart of {self.user.username}"
 
+    
 class CartItem(models.Model):
-    cart = models.ForeignKey(Cart, on_delete=models.CASCADE, related_name='items')
+    cart = models.ForeignKey(Cart, related_name='items', on_delete=models.CASCADE)
     item = models.ForeignKey(Item, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField(default=1)
 
-    def __str__(self):
-        return f"{self.item.name} x {self.quantity}"
-
+    @property
     def total_price(self):
-        return self.quantity * self.item.price
+        if self.item.sale_price is not None:
+            return self.item.sale_price * self.quantity
+        else:
+            return self.item.price * self.quantity
+
+    def __str__(self):
+        return f"{self.quantity} of {self.item.name}"

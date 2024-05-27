@@ -13,6 +13,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from django.contrib.auth import authenticate, login
 from django.shortcuts import get_object_or_404
+from django.core.paginator import Paginator
 
 
 # views.py
@@ -30,27 +31,8 @@ def home(request):
     context = {'items': items, 'topics': topics}
     return render(request, 'shop/home.html', context)
 
-
-
-# def item(request, pk):
-#     item = Item.objects.get(id=pk)
-#     item_messages = item.message_set.all()
-#     participants = item.participants.all()
-
-#     if request.method == 'POST':
-#         message = Message.objects.create(
-#             user=request.user,
-#             item=item,
-#             body=request.POST.get('body')
-#         )
-#         item.participants.add(request.user)
-#         return redirect('view-item', pk=item.id)
-
-#     context = {'item': item, 'item_messages': item_messages, 'participants': participants}
-#     return render(request, 'shop/view_item.html', context)
-
-
-def item(request, pk):
+#view item
+def item_details(request, pk):
     item = Item.objects.get(id=pk)
     item_messages = item.message_set.all()
 
@@ -67,7 +49,11 @@ def item(request, pk):
     context = {'item': item, 'item_messages': item_messages}
     return render(request, 'shop/view_item.html', context)
 
+def related_pro(request):
+    items = Item.objects.all()
 
+    context = {'items': items}
+    return render(request, 'shop/related_pro.html', context)
 
 
 @login_required(login_url='login')
@@ -81,10 +67,11 @@ def createItems(request):
             item.host = request.user
             item.save()
             return redirect('shop')
-        
-    context = {'form':form}
-    return render(request, 'shop/item.html', context)
+        else:
+            print(form.errors)  # In lỗi form ra log để kiểm tra
 
+    context = {'form': form}
+    return render(request, 'shop/item.html', context)
 
 @login_required(login_url='login')
 def update_item(request, pk):
@@ -121,7 +108,9 @@ def view_item(request, pk):
     item = Item.objects.get(id=pk)
     item_messages = item.message_set.all()
 
-    context = {'item': item, 'item_messages': item_messages}
+    items = Item.objects.all().order_by('-created')[:4]
+
+    context = {'item': item, 'item_messages': item_messages , 'items' :items}
     return render(request, 'shop/view_item.html', context)
 
 
@@ -144,6 +133,8 @@ def deleteMessage(request, pk):
 def indexPage(request):
     return render(request, 'shop/index.html')
 
+
+
 def shopPage(request):
     q = request.GET.get('q', '')
     items = Item.objects.all()
@@ -151,8 +142,12 @@ def shopPage(request):
     if q:
         items = items.filter(topic__name__icontains=q)
 
+    paginator = Paginator(items, 8)  # Chia danh sách sản phẩm thành các trang, mỗi trang có tối đa 8 sản phẩm
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)  # Lấy trang hiện tại từ query parameter 'page'
+
     topics = Topic.objects.all()
-    context = {'items': items, 'topics': topics}
+    context = {'page_obj': page_obj, 'topics': topics}
     return render(request, 'shop/shop.html', context)
 
 
@@ -234,19 +229,47 @@ def add_to_cart(request, pk):
     return redirect('cart_detail')
 
 
-
 @login_required(login_url='login')
 def cart_detail(request):
     cart, created = Cart.objects.get_or_create(user=request.user)
+    cart_items = cart.items.all()
+
     if request.method == 'POST':
-        form = CartItemUpdateForm(request.POST)
-        if form.is_valid():
-            cart_item_id = request.POST.get('cart_item_id')
-            cart_item = CartItem.objects.GET(id=cart_item_id)
-            cart_item.quantity = form.cleaned_data['quantity']
-            cart_item.save()
-            return redirect('cart_detail')
-    return render(request, 'shop/cart_detail.html', {'cart': cart})
+        cart_item_id = request.POST.get('cart_item_id')
+        quantity = request.POST.get('quantity')
+
+        if 'quantity' in request.POST:
+            try:
+                cart_item = CartItem.objects.get(id=cart_item_id, cart=cart)
+                cart_item.quantity = int(quantity)
+                cart_item.save()
+            except CartItem.DoesNotExist:
+                # Handle the case where the cart item does not exist
+                pass
+        return redirect('cart_detail')
+
+    total_price = sum(item.total_price for item in cart_items)
+
+    context = {
+        'cart': cart,
+        'cart_items': cart_items,
+        'total_price': total_price,
+    }
+    return render(request, 'shop/cart_detail.html', context)
+
+@login_required(login_url='login')
+def cart_deleteItem(request):
+    if request.method == 'POST':
+        cart_item_id = request.POST.get('cart_item_id')
+        try:
+            cart_item = CartItem.objects.get(id=cart_item_id, cart__user=request.user)
+            cart_item.delete()
+        except CartItem.DoesNotExist:
+            # Handle the case where the item does not exist
+            pass
+        return redirect('cart_detail')
+    else:
+        return redirect('cart_detail')
 
 # @login_required
 # def checkout(request):
@@ -260,3 +283,4 @@ def cart_detail(request):
 # @login_required
 # def checkout_success(request):
 #     return render(request, 'checkout_success.html')
+

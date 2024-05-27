@@ -1,290 +1,124 @@
 {% extends 'main.html' %}
-
 {% block content %}
 {% load static %}
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
-  integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
 
-<style>
-  .container-product {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 100%;
-    max-width: 900px;
-    margin: 0 auto;
-    border: 1px solid #ddd;
-    border-radius: 10px;
-  }
+<!DOCTYPE html>
+<script src="{% static 'js/view_item.js' %}"></script>
 
-  .product-row {
-    display: flex;
-    flex-wrap: wrap;
-    /* Allow items to wrap on smaller screens */
-  }
-
-  .product-card {
-    display: flex;
-    flex-direction: column;
-    background-color: #fff;
-    border-radius: 4px;
-    box-shadow: 4px 4px 10px rgba(128, 128, 128, 0.2);
-    margin: 10px;
-    width: 48%;
-    /* Adjusted width for two cards per row */
-  }
-
-  .product-card img {
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-    width: 100%;
-    /* Stretch image to full column width */
-    height: 400px;
-    /* Set fixed height for image */
-    object-fit: cover;
-    /* Preserve aspect ratio while covering the container */
-  }
-
-  .product-card .detail-box {
-    padding: 10px;
-    flex: 1;
-    /* Allows detail box to grow and fill remaining space */
-  }
-
-  .product-card .detail-box h6 {
-    margin-top: 0;
-    font-weight: bold;
-  }
-
-  .product-card .detail-box .price {
-    color: #f00;
-    margin-bottom: 5px;
-  }
-
-  .empty-column {
-    text-align: center;
-    width: 48%;
-    /* Adjusted width to match product card */
-    border: 1px solid #ddd;
-    /* Optional border for distinction */
-    padding: 10px 0px 10px;
-    /* Optional padding for content spacing */
-    height: 400px;
-    /* Set fixed height for empty column */
-    margin-top: 1rem;
-    border-radius: 5px;
-  }
-
-
-  .empty-column h1 {
-    margin: 0;
-  }
-
-  .message-section {
-    margin-top: 20px;
-    width: 100%;
-  }
-
-  .message-section h3 {
-    margin-bottom: 10px;
-  }
-
-  .message-form {
-    margin-bottom: 10px;
-  }
-
-  .container-message {
-    /* margin-top: 3rem; */
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 100%;
-    max-width: 900px;
-    margin: 0 auto;
-    border: 1px solid #ddd;
-    border-radius: 10px;
-  }
-
-  .btn-submit {
-    display: inline-block;
-    padding: 10px 20px;
-    background-color: #007bff;
-    color: #fff;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    margin-left: auto;
-  }
-
-  button {
-    padding: 10px 20px;
-    background-color: #007bff;
-    color: #fff;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-
-  a {
-    color: #007bff;
-
-  }
-
-  .btn-delete {
-    display: inline-block;
-    padding: 10px 20px;
-    background-color: #dc3545;
-    color: #fff;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    text-decoration: none;
-  }
-
-  input[type="text"] {
-    width: 70%;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-  }
-
-  .send-mes {
-    display: flex;
-  }
-
-  .container-cart {
-    /* margin-top: 140px; */
-    color: 007bff;
-  }
-
-  span {
-    color: 007bff;
-  }
-
-  /* Responsive styles */
-  @media (max-width: 768px) {
-    .product-card {
-      width: 100%;
-      /* Full width for smaller screens */
-    }
-
-    .empty-column {
-      display: none;
-      /* Hide empty column on smaller screens */
-    }
-  }
-</style>
-
-<div class="container-product">
-  <div class="product-row">
-    <div class="product-card">
-      <div class="img-box">
-        {% if item.image %}
-        <img src="{{ item.image.url }}" alt="{{ item.name }}">
-        {% else %}
-        <img src="{% static 'images/placeholder.jpg' %}" alt="Placeholder">
-        {% endif %}
-      </div>
-      <div class="detail-box">
-        <h6>{{ item.name }}</h6>
-        <p class="price">Price: $<span>{{ item.price }}</span></p>
-      </div>
-    </div>
-    <div class="empty-column">
-      <p>{{item.description}}</p>
-      
-      <div class="empty-row" style="margin-top:140px;">
-        <h1>Đây là chỗ để cart</h1>
-        <div class="container-cart" align="center">
-          <p>
-            <button type="button" class="btn btn-default btn-sm" id="decrease">
-              <span class="glyphicon glyphicon-minus"></span>
-            </button>
-            <input type="number" id="quantity" value="1" min="1" step="1" style="width: 50px; text-align: center;">
-            <button type="button" class="btn btn-default btn-sm" id="increase">
-              <span class="glyphicon glyphicon-plus"></span>
-            </button>
-            <button type="button" class="btn btn-default btn-sm" id="add-to-cart" data-item-id="{{ item.id }}">
-              <span class="glyphicon glyphicon-shopping-cart"></span>
-              <b> Add to Cart </b>
-            </button>
-          </p>
-        </div>        
-      </div>
-
-    </div>
-  </div>
-</div>
-
-<div class="container-message" style="margin-top:20px;">
-  <div class="message-section">
-    <div class="message-form">
-      <form method="POST" action="{% url 'item' item.pk %}">
-        {% csrf_token %}
-        <div class="send-mes">
-          <input type="text" name="body" placeholder="Type your message here">
-          <button type="submit" class="btn-submit">Send Message</button>
+<body>
+    <!-- Product section-->
+    <section class="py-5">
+        <div class="container px-4 px-lg-5 my-5">
+            <div class="row gx-4 gx-lg-5 align-items-center">
+                <div class="col-md-6">
+                    <div class="img-box">
+                        <img class="card-img-top mb-5 mb-md-0" style="    width: 300px;
+                        height: auto;" src="{{ item.image.url }}" alt="{{ item.name }}" />
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="small mb-1">A product by Giftos</div>
+                    <h1 class="display-5 fw-bolder">{{ item.name }}</h1>
+                    <div class="fs-5 mb-5">
+                        <span class="text-decoration-line-through">$ {{ item.price}}</span>
+                        <span>$ {{ item.sale_price }}</span>
+                        <br>
+                        <span>Item left: {{ item.quantity_available }}</span>
+                    </div>
+                    <p class="lead">{{ item.description }}</p>
+                    <div class="d-flex">
+                        <p>
+                            <button type="button" class="btn btn-default btn-sm" id="decrease">
+                                <span class="glyphicon glyphicon-minus"></span>
+                            </button>
+                            <input type="number" id="quantity" value="1" min="1" step="1"
+                                style="width: 50px; text-align: center;">
+                            <button type="button" class="btn btn-default btn-sm" id="increase">
+                                <span class="glyphicon glyphicon-plus"></span>
+                            </button>
+                            <button type="button" class="btn btn-default btn-sm" id="add-to-cart"
+                                data-item-id="{{ item.id }}">
+                                <span class="glyphicon glyphicon-shopping-cart"></span>
+                                <b> Add to Cart </b>
+                            </button>
+                        </p>
+                    </div>
+                </div>
+            </div>
         </div>
+    </section>
+    <div class="container-message" style="margin-top:20px;">
+        <div class="message-section">
+            <div class="message-form">
+                <form method="POST" action="{% url 'item' item.pk %}">
+                    {% csrf_token %}
+                    <div class="send-mes">
+                        <input type="text" name="body" placeholder="Type your message here">
+                        <button type="submit" class="btn-submit">Send Message</button>
+                    </div>
 
-      </form>
+                </form>
+            </div>
+
+            <div class="mess-p">
+                <h3>Messages:</h3>
+                <ul>
+                    {% for message in item_messages %}
+                    <li>Name: {{ message.user }}</li>
+                    <li>Message: {{ message.body }}</li>
+                    {% if message.user == request.user %}
+                    <form method="POST" action="{% url 'delete-message' message.pk %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn-delete">Delete</button>
+                    </form>
+                    {% endif %}
+                    <hr>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
     </div>
-
-    <div class="mess-p">
-      <h3>Messages:</h3>
-      <ul>
-        {% for message in item_messages %}
-        <li>Name: {{ message.user }}</li>
-        <li>Message: {{ message.body }}</li>
-        {% if message.user == request.user %}
-        <form method="POST" action="{% url 'delete-message' message.pk %}">
-          {% csrf_token %}
-          <button type="submit" class="btn-delete">Delete</button>
-        </form>
-        {% endif %}
-        <hr>
-        {% endfor %}
-      </ul>
-    </div>
-  </div>
-</div>
-
+    <!-- Related items section-->
+    {% include 'shop/related_pro.html' %}
+    <!-- Footer-->
+    {% include 'shop/info_section.html'%}
+</body>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script>
-$(document).ready(function() {
-    $('#increase').click(function() {
-        let quantity = parseInt($('#quantity').val());
-        $('#quantity').val(quantity + 1);
-    });
+    $(document).ready(function () {
+        $('#increase').click(function () {
+            let quantity = parseInt($('#quantity').val());
+            $('#quantity').val(quantity + 1);
+        });
 
-    $('#decrease').click(function() {
-        let quantity = parseInt($('#quantity').val());
-        if (quantity > 1) {
-            $('#quantity').val(quantity - 1);
-        }
-    });
-
-    $('#add-to-cart').click(function() {
-        let itemId = $(this).data('item-id');
-        let quantity = $('#quantity').val();
-
-        $.ajax({
-            url: "{% url 'add_to_cart' 0 %}".replace('0', itemId),
-            method: 'POST',
-            data: {
-                'quantity': quantity,
-                'csrfmiddlewaretoken': '{{ csrf_token }}'
-            },
-            success: function(response) {
-                alert("Item added to cart successfully!");
-            },
-            error: function(response) {
-                alert("Failed to add item to cart.");
+        $('#decrease').click(function () {
+            let quantity = parseInt($('#quantity').val());
+            if (quantity > 1) {
+                $('#quantity').val(quantity - 1);
             }
         });
+
+        $('#add-to-cart').click(function () {
+            let itemId = $(this).data('item-id');
+            let quantity = $('#quantity').val();
+
+            $.ajax({
+                url: "{% url 'add_to_cart' 0 %}".replace('0', itemId),
+                method: 'POST',
+                data: {
+                    'quantity': quantity,
+                    'csrfmiddlewaretoken': '{{ csrf_token }}'
+                },
+                success: function (response) {
+                    alert("Item added to cart successfully!");
+                },
+                error: function (response) {
+                    alert("Failed to add item to cart.");
+                }
+            });
+        });
     });
-});
 </script>
 
 {% endblock content %}

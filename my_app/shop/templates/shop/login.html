@@ -62,7 +62,7 @@
 <div>
     <!-- Sử dụng một thẻ form và bảo vệ CSRF token -->
 
-    <form method="POST" action="">
+    <form method="POST" action="" style="margin-bottom: 100px;">
         <section class="login-section">
             {% csrf_token %}
             <h1>Login</h1>
@@ -83,7 +83,7 @@
 
 </div>
 
-
+{% include 'shop/info_section.html'%}
 
 
 {% endblock content %}
