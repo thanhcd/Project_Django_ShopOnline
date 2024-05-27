@@ -1,5 +1,4 @@
-
- <div class="hero_area">
+<div class="hero_area">
 
     <nav class="navbar navbar-expand-lg custom_nav-container ">
         <a class="navbar-brand" href="{% url 'home' %}">
@@ -29,25 +28,27 @@
                 </li>
             </ul>
             {% if request.user.is_authenticated %}
-            <div class="" style="margin-left:auto; margin-right:20px;">
-                <p>Xin chào, {{ request.user.username }}!</p>
-                <a href="{% url 'create-items' %}">Create item</a>
-                <a href="{% url 'logout' %}">Đăng xuất</a>
-                {% else %}
-                <p>Bạn chưa đăng nhập.</p>
-                <a href="{% url 'login' %}">Đăng nhập</a>
-                {% endif %}
-                <a href="{% url 'cart_detail' %}">
-                    <i class="fa fa-shopping-bag" aria-hidden="true"></i>
-                </a>
-                <form class="form-inline">
-                    <button class="btn nav_search-btn" type="submit">
-                        <i class="fa fa-search" aria-hidden="true"></i>
-                    </button>
-                </form>
+            <div class="" style="margin-left:auto; margin-right:30px;">
+                <div style="font-size: small;">
+                    <p>Xin chào, {{ request.user.username }}!</p>
+                    <a href="{% url 'create-items' %}">Create item</a>
+                    <a href="{% url 'logout' %}">Đăng xuất</a>
+                    {% else %}
+                    <p>Bạn chưa đăng nhập.</p>
+                    <a href="{% url 'login' %}">Đăng nhập</a>
+                    {% endif %}
+                    <a href="{% url 'cart_detail' %}">
+                        <i class="fa fa-shopping-bag" aria-hidden="true"></i>
+                    </a>
+                    <form class="form-inline">
+                        <button class="btn nav_search-btn" type="submit">
+                            <i class="fa fa-search" aria-hidden="true"></i>
+                        </button>
+                    </form>
+                </div>
             </div>
         </div>
     </nav>
 
 
-</div> 
+</div>

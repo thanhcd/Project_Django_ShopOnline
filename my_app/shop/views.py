@@ -234,18 +234,21 @@ def cart_detail(request):
     cart, created = Cart.objects.get_or_create(user=request.user)
     cart_items = cart.items.all()
 
-    # Tính tổng giá trị của giỏ hàng
-    total_price = sum(item.total_price for item in cart_items)
-
     if request.method == 'POST':
-        for item in cart_items:
-            cart_item_id = request.POST.get('cart_item_id')
-            quantity = request.POST.get('quantity')
-            if cart_item_id and quantity:
-                cart_item = CartItem.objects.get(id=cart_item_id)
+        cart_item_id = request.POST.get('cart_item_id')
+        quantity = request.POST.get('quantity')
+
+        if 'quantity' in request.POST:
+            try:
+                cart_item = CartItem.objects.get(id=cart_item_id, cart=cart)
                 cart_item.quantity = int(quantity)
                 cart_item.save()
+            except CartItem.DoesNotExist:
+                # Handle the case where the cart item does not exist
+                pass
         return redirect('cart_detail')
+
+    total_price = sum(item.total_price for item in cart_items)
 
     context = {
         'cart': cart,
@@ -254,6 +257,19 @@ def cart_detail(request):
     }
     return render(request, 'shop/cart_detail.html', context)
 
+@login_required(login_url='login')
+def cart_deleteItem(request):
+    if request.method == 'POST':
+        cart_item_id = request.POST.get('cart_item_id')
+        try:
+            cart_item = CartItem.objects.get(id=cart_item_id, cart__user=request.user)
+            cart_item.delete()
+        except CartItem.DoesNotExist:
+            # Handle the case where the item does not exist
+            pass
+        return redirect('cart_detail')
+    else:
+        return redirect('cart_detail')
 
 # @login_required
 # def checkout(request):
