@@ -31,7 +31,6 @@ def home(request):
     return render(request, 'shop/home.html', context)
 
 
-
 # def item(request, pk):
 #     item = Item.objects.get(id=pk)
 #     item_messages = item.message_set.all()
@@ -50,7 +49,7 @@ def home(request):
 #     return render(request, 'shop/view_item.html', context)
 
 
-def item(request, pk):
+def item_details(request, pk):
     item = Item.objects.get(id=pk)
     item_messages = item.message_set.all()
 
@@ -68,8 +67,6 @@ def item(request, pk):
     return render(request, 'shop/view_item.html', context)
 
 
-
-
 @login_required(login_url='login')
 def createItems(request):
     form = ItemsForm()
@@ -81,10 +78,11 @@ def createItems(request):
             item.host = request.user
             item.save()
             return redirect('shop')
-        
-    context = {'form':form}
-    return render(request, 'shop/item.html', context)
+        else:
+            print(form.errors)  # In lỗi form ra log để kiểm tra
 
+    context = {'form': form}
+    return render(request, 'shop/item.html', context)
 
 @login_required(login_url='login')
 def update_item(request, pk):
@@ -143,6 +141,7 @@ def deleteMessage(request, pk):
 
 def indexPage(request):
     return render(request, 'shop/index.html')
+
 
 def shopPage(request):
     q = request.GET.get('q', '')
@@ -238,15 +237,28 @@ def add_to_cart(request, pk):
 @login_required(login_url='login')
 def cart_detail(request):
     cart, created = Cart.objects.get_or_create(user=request.user)
+    cart_items = cart.items.all()
+
+    # Tính tổng giá trị của giỏ hàng
+    total_price = sum(item.total_price for item in cart_items)
+
     if request.method == 'POST':
-        form = CartItemUpdateForm(request.POST)
-        if form.is_valid():
+        for item in cart_items:
             cart_item_id = request.POST.get('cart_item_id')
-            cart_item = CartItem.objects.GET(id=cart_item_id)
-            cart_item.quantity = form.cleaned_data['quantity']
-            cart_item.save()
-            return redirect('cart_detail')
-    return render(request, 'shop/cart_detail.html', {'cart': cart})
+            quantity = request.POST.get('quantity')
+            if cart_item_id and quantity:
+                cart_item = CartItem.objects.get(id=cart_item_id)
+                cart_item.quantity = int(quantity)
+                cart_item.save()
+        return redirect('cart_detail')
+
+    context = {
+        'cart': cart,
+        'cart_items': cart_items,
+        'total_price': total_price,
+    }
+    return render(request, 'shop/cart_detail.html', context)
+
 
 # @login_required
 # def checkout(request):

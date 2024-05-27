@@ -50,13 +50,26 @@ class Cart(models.Model):
     def __str__(self):
         return f"Cart of {self.user.username}"
 
+# class CartItem(models.Model):
+#     cart = models.ForeignKey(Cart, on_delete=models.CASCADE, related_name='items')
+#     item = models.ForeignKey(Item, on_delete=models.CASCADE)
+#     quantity = models.PositiveIntegerField(default=1)
+
+#     def __str__(self):
+#         return f"{self.item.name} x {self.quantity}"
+
+#     def total_price(self):
+#         return self.quantity * self.item.price
+    
+
 class CartItem(models.Model):
-    cart = models.ForeignKey(Cart, on_delete=models.CASCADE, related_name='items')
+    cart = models.ForeignKey(Cart, related_name='items', on_delete=models.CASCADE)
     item = models.ForeignKey(Item, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField(default=1)
 
-    def __str__(self):
-        return f"{self.item.name} x {self.quantity}"
-
+    @property
     def total_price(self):
-        return self.quantity * self.item.price
+        return self.item.price * self.quantity
+
+    def __str__(self):
+        return f"{self.quantity} of {self.item.name}"

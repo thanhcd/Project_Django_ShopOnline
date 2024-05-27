@@ -19,7 +19,7 @@ urlpatterns = [
 
     path('delete-message/<str:pk>/', views.deleteMessage, name = "delete-message"),
     
-    path('item/<str:pk>/', views.item, name = "item"),
+    path('item/<str:pk>/', views.item_details, name = "item"),
     path('index/', views.indexPage, name = "index"),
     path('shop/', views.shopPage, name = "shop"),
 
