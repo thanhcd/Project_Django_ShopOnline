@@ -30,25 +30,7 @@ def home(request):
     context = {'items': items, 'topics': topics}
     return render(request, 'shop/home.html', context)
 
-
-# def item(request, pk):
-#     item = Item.objects.get(id=pk)
-#     item_messages = item.message_set.all()
-#     participants = item.participants.all()
-
-#     if request.method == 'POST':
-#         message = Message.objects.create(
-#             user=request.user,
-#             item=item,
-#             body=request.POST.get('body')
-#         )
-#         item.participants.add(request.user)
-#         return redirect('view-item', pk=item.id)
-
-#     context = {'item': item, 'item_messages': item_messages, 'participants': participants}
-#     return render(request, 'shop/view_item.html', context)
-
-
+#view item
 def item_details(request, pk):
     item = Item.objects.get(id=pk)
     item_messages = item.message_set.all()
@@ -65,6 +47,12 @@ def item_details(request, pk):
 
     context = {'item': item, 'item_messages': item_messages}
     return render(request, 'shop/view_item.html', context)
+
+def related_pro(request):
+    items = Item.objects.all()
+
+    context = {'items': items}
+    return render(request, 'shop/related_pro.html', context)
 
 
 @login_required(login_url='login')
@@ -272,3 +260,6 @@ def cart_detail(request):
 # @login_required
 # def checkout_success(request):
 #     return render(request, 'checkout_success.html')
+
+def view_item_new(request):
+    return render(request, 'shop/view_item_new.html')
