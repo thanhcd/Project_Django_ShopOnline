@@ -27,7 +27,7 @@
                         </form>
                     </div>
                     <div class="cart-item-update">
-                        <form method="post" action="{% url 'cart_detail' %}">
+                        <form method="post" action="{% url 'cart_updateItem' item.id %}" onsubmit="updateCart()">
                             {% csrf_token %}
                             <input type="hidden" name="cart_item_id" value="{{ item.id }}">
                             <button type="submit" class="btn btn-primary">Update</button>
@@ -150,6 +150,12 @@
 <script>
     function redirectToShop() {
         window.location.href = "{% url 'shop' %}";
+    }
+
+    function updateCart() {
+        // Gửi một request GET mới đến trang cart
+        window.location.href = "{% url 'cart_detail' %}";
+        return false; // Ngăn chặn form submit mặc định
     }
 </script>
 {% endblock %}

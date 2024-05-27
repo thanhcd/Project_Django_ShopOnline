@@ -257,6 +257,7 @@ def cart_detail(request):
     }
     return render(request, 'shop/cart_detail.html', context)
 
+
 @login_required(login_url='login')
 def cart_deleteItem(request):
     if request.method == 'POST':
@@ -270,6 +271,19 @@ def cart_deleteItem(request):
         return redirect('cart_detail')
     else:
         return redirect('cart_detail')
+    
+
+@login_required(login_url='login')
+def cart_updateItem(request, pk):
+    if request.method == 'POST':
+        cart_item = get_object_or_404(CartItem, id=pk, cart__user=request.user)
+        quantity = request.POST.get('quantity')
+        if quantity:
+            cart_item.quantity = int(quantity)
+            cart_item.save()
+        print("lưu thành công")
+        return redirect('cart_detail')
+
 
 # @login_required
 # def checkout(request):
