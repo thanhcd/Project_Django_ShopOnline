@@ -221,7 +221,6 @@ def add_to_cart(request, pk):
     return redirect('cart_detail')
 
 
-
 @login_required(login_url='login')
 def cart_detail(request):
     cart, created = Cart.objects.get_or_create(user=request.user)

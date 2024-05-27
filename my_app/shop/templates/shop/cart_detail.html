@@ -18,6 +18,7 @@
                         <input type="hidden" name="cart_item_id" value="{{ item.id }}">
                     </p>
                     <p>Price: {{ item.item.price }}</p>
+                    <p>Sale Price: {{ item.item.sale_price }}</p>
                     <p>Total: {{ item.total_price|floatformat:2 }}</p>
                     <div class="cart-item-update">
                         <button type="submit">Update</button>
