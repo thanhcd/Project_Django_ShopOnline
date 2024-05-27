@@ -1,7 +1,7 @@
 {% extends 'main.html' %}
 
 {% block content %}
-<div class="signup-sections">
+<div class="signup-sections" style="margin-bottom: 100px;">
     <h2>Sign Up</h2>
     <form method="POST">
         {% csrf_token %}
@@ -26,6 +26,9 @@
         <a href="{% url 'login' %}">Login</a>
     </form>
 </div>
+
+{% include 'shop/info_section.html'%}
+
 <style>
     .signup-sections {
     background-color: #fff;

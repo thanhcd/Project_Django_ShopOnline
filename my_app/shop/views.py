@@ -13,6 +13,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from django.contrib.auth import authenticate, login
 from django.shortcuts import get_object_or_404
+from django.core.paginator import Paginator
 
 
 # views.py
@@ -107,7 +108,9 @@ def view_item(request, pk):
     item = Item.objects.get(id=pk)
     item_messages = item.message_set.all()
 
-    context = {'item': item, 'item_messages': item_messages}
+    items = Item.objects.all().order_by('-created')[:4]
+
+    context = {'item': item, 'item_messages': item_messages , 'items' :items}
     return render(request, 'shop/view_item.html', context)
 
 
@@ -131,6 +134,7 @@ def indexPage(request):
     return render(request, 'shop/index.html')
 
 
+
 def shopPage(request):
     q = request.GET.get('q', '')
     items = Item.objects.all()
@@ -138,8 +142,12 @@ def shopPage(request):
     if q:
         items = items.filter(topic__name__icontains=q)
 
+    paginator = Paginator(items, 8)  # Chia danh sách sản phẩm thành các trang, mỗi trang có tối đa 8 sản phẩm
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)  # Lấy trang hiện tại từ query parameter 'page'
+
     topics = Topic.objects.all()
-    context = {'items': items, 'topics': topics}
+    context = {'page_obj': page_obj, 'topics': topics}
     return render(request, 'shop/shop.html', context)
 
 
@@ -260,5 +268,3 @@ def cart_detail(request):
 # def checkout_success(request):
 #     return render(request, 'checkout_success.html')
 
-def view_item_new(request):
-    return render(request, 'shop/view_item_new.html')

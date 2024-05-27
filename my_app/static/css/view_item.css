@@ -4283,7 +4283,7 @@ textarea.form-control-lg {
   margin-right: auto;
   /* width: 50%; */
   width: 200px;
-  height: auto;
+  height: 200px;
   border-top-left-radius: var(--bs-card-inner-border-radius);
   border-top-right-radius: var(--bs-card-inner-border-radius);
 }
