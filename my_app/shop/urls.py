@@ -22,11 +22,18 @@ urlpatterns = [
     path('item/<str:pk>/', views.item_details, name = "item"),
     path('index/', views.indexPage, name = "index"),
     path('shop/', views.shopPage, name = "shop"),
+    path('why/', views.whyPage, name = "why"),
+    path('testimonial/', views.testimonialPage, name = "testimonial"),
+    path('contact/', views.contactPage, name = "contact"),
+
+
+
 
     path('shop/', views.shopPage, name = "shop"),
     path('cart/', views.cart_detail, name='cart_detail'),
     path('cart/add/<int:pk>/', views.add_to_cart, name='add_to_cart'),
-    path('cart/update-item/<int:pk>/', views.cart_updateItem, name='cart_updateItem'),
+    path('cart/update/<int:pk>/', views.update_cart_item, name='cart_updateItem'),
+
     path('cart/delete-item/', views.cart_deleteItem, name='cart_deleteItem'),
 
     path('related_pro/', views.related_pro, name = "related_pro"),

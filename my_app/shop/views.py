@@ -133,6 +133,14 @@ def deleteMessage(request, pk):
 def indexPage(request):
     return render(request, 'shop/index.html')
 
+def whyPage(request):
+    return render(request, 'shop/why.html')
+
+def testimonialPage(request):
+    return render(request, 'shop/testimonial.html')
+
+def contactPage(request):
+    return render(request, 'shop/contact.html')
 
 
 def shopPage(request):
@@ -273,17 +281,35 @@ def cart_deleteItem(request):
         return redirect('cart_detail')
     
 
-@login_required(login_url='login')
-def cart_updateItem(request, pk):
-    if request.method == 'POST':
-        cart_item = get_object_or_404(CartItem, id=pk, cart__user=request.user)
-        quantity = request.POST.get('quantity')
-        if quantity:
-            cart_item.quantity = int(quantity)
-            cart_item.save()
-        print("lưu thành công")
-        return redirect('cart_detail')
+# @login_required(login_url='login')
+# def cart_updateItem(request, pk):
+#     if request.method == 'POST':
+#         cart_item = get_object_or_404(CartItem, id=pk, cart__user=request.user)
+#         quantity = request.POST.get('quantity')
+#         if quantity:
+#             cart_item.quantity = int(quantity)
+#             cart_item.save()
+#         print("lưu thành công")
+#         return redirect('cart_detail')
 
+def update_cart_item(request, pk):
+    if request.method == 'POST':
+        quantity = request.POST.get('quantity')
+        print(f"Received quantity: {quantity} for CartItem ID: {pk}")
+        
+        if quantity and quantity.isdigit() and int(quantity) > 0:
+            cart_item = get_object_or_404(CartItem, id=pk, cart__user=request.user)
+            quantity = int(quantity)
+            if quantity <= cart_item.item.quantity_available:
+                cart_item.quantity = quantity
+                cart_item.save()
+                print(f"Updated CartItem {cart_item.id} to quantity {cart_item.quantity}")
+            else:
+                print(f"Invalid quantity {quantity} for CartItem {cart_item.id}")
+        else:
+            print(f"Invalid input quantity: {quantity}")
+        
+    return redirect('cart_detail')
 
 # @login_required
 # def checkout(request):
