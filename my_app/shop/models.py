@@ -69,75 +69,39 @@ class CartItem(models.Model):
         return f"{self.quantity} of {self.item.name}"
 
 
-
-
-class Order(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-    total_price = models.DecimalField(max_digits=10, decimal_places=2, default=0)
-    status = models.CharField(max_length=20, choices=[
-        ('pending', 'Pending'),
-        ('completed', 'Completed'),
-        ('canceled', 'Canceled')
-    ], default='pending')
-    country = models.CharField(max_length=100)
-    first_name = models.CharField(max_length=50)
-    last_name = models.CharField(max_length=50)
-    address = models.TextField()
-    city = models.CharField(max_length=100)
-    state = models.CharField(max_length=100)
-    postal_code = models.CharField(max_length=20)
-    phone_number = models.CharField(max_length=20)
-    email = models.EmailField()
+class UserProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
+    country = models.CharField(max_length=100, blank=True, null=True)
+    first_name = models.CharField(max_length=50, blank=True, null=True)
+    last_name = models.CharField(max_length=50, blank=True, null=True)
+    address = models.TextField(blank=True, null=True)
+    city = models.CharField(max_length=100, blank=True, null=True)
+    state = models.CharField(max_length=100, blank=True, null=True)
+    postal_code = models.CharField(max_length=20, blank=True, null=True)
+    phone_number = models.CharField(max_length=20, blank=True, null=True)
+    email = models.EmailField(blank=True, null=True)
 
     def __str__(self):
-        return f"Order {self.id} by {self.user.username}"
-
-    def calculate_total_price(self):
-        total = Decimal(0)
-        for item in self.items.all():
-            total += item.total_price()
-        self.total_price = total
-        self.save()
+        return f"Profile of {self.user.username}"
 
 
-class OrderItem(models.Model):
-    order = models.ForeignKey(Order, related_name='items', on_delete=models.CASCADE)
-    item = models.ForeignKey(Item, on_delete=models.CASCADE)
-    quantity = models.PositiveIntegerField()
-    price = models.DecimalField(max_digits=10, decimal_places=2)
+# class Order(models.Model):
+#     user = models.ForeignKey(User, on_delete=models.CASCADE)
+#     profile = models.ForeignKey(UserProfile, on_delete=models.CASCADE, related_name='orders')
+#     created_at = models.DateTimeField(auto_now_add=True)
+#     updated_at = models.DateTimeField(auto_now=True)
+#     total_price = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+#     status = models.CharField(max_length=20, choices=[
+#         ('pending', 'Pending'),
+#         ('completed', 'Completed'),
+#         ('canceled', 'Canceled')
+#     ], default='pending')
+    
+#     def __str__(self):
+#         return f"Order {self.id} by {self.user.username}"
 
-    def __str__(self):
-        return f"{self.quantity} x {self.item.name}"
-
-    def total_price(self):
-        return self.price * self.quantity
-
-
-class Payment(models.Model):
-    order = models.OneToOneField(Order, on_delete=models.CASCADE)
-    method = models.CharField(max_length=20, choices=[
-        ('credit_card', 'Credit Card'),
-        ('paypal', 'PayPal'),
-        ('cash_on_delivery', 'Cash on Delivery')
-    ])
-    status = models.CharField(max_length=20, choices=[
-        ('pending', 'Pending'),
-        ('completed', 'Completed'),
-        ('failed', 'Failed')
-    ], default='pending')
-    transaction_id = models.CharField(max_length=100, blank=True, null=True)
-    payment_date = models.DateTimeField(blank=True, null=True)
-    card_type = models.CharField(max_length=20, choices=[
-        ('visa', 'Visa'),
-        ('mastercard', 'MasterCard'),
-        ('amex', 'American Express')
-    ], blank=True, null=True)
-    card_number = models.CharField(max_length=20, blank=True, null=True)
-    card_cvv = models.CharField(max_length=4, blank=True, null=True)
-    card_expiration_month = models.PositiveIntegerField(blank=True, null=True)
-    card_expiration_year = models.PositiveIntegerField(blank=True, null=True)
-
-    def __str__(self):
-        return f"Payment for order {self.order.id} - {self.status}"
+#     def calculate_total_price(self):
+#         total = Decimal(0)
+#         for item in self.items.all():
+#             total += item.total_price()
+#         self.total_p

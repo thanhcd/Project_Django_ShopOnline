@@ -10,6 +10,9 @@ urlpatterns = [
     path('register/', views.registerPage, name='register'),
     path('api/register/', views.api_register, name='api_register'),
     path('api/login/', views.api_login, name='api_login'),
+    path('user/', views.user_info, name='user'),
+    #  path('update_user_info/', views.update_user_info, name='update_user_info'),  # Thêm đường dẫn mới
+    
 
     path('logout/', views.logoutUser, name = "logout"),
     path('create-items/', views.createItems, name="create-items"),
@@ -26,20 +29,18 @@ urlpatterns = [
     path('testimonial/', views.testimonialPage, name = "testimonial"),
     path('contact/', views.contactPage, name = "contact"),
 
-
-
-
     path('shop/', views.shopPage, name = "shop"),
     path('cart/', views.cart_detail, name='cart_detail'),
     path('cart/add/<int:pk>/', views.add_to_cart, name='add_to_cart'),
     path('cart/update/<int:pk>/', views.update_cart_item, name='cart_updateItem'),
-    path('checkout/', views.checkout, name='checkout'),
+    path('checkout/', views.checkoutPage, name='checkoutpage'),
 
     path('cart/delete-item/', views.cart_deleteItem, name='cart_deleteItem'),
 
     path('related_pro/', views.related_pro, name = "related_pro"),
 
 
+    
     
     # path('checkout/', views.checkout, name='checkout'),
     # path('checkout/success/', views.checkout_success, name='checkout_success'),

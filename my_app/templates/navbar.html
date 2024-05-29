@@ -30,7 +30,7 @@
             {% if request.user.is_authenticated %}
             <div class="" style="margin-left:auto; margin-right:30px;">
                 <div style="font-size: small;">
-                    <p>Xin chào, {{ request.user.username }}!</p>
+                    <a href="{% url 'user' %}"><p>Xin chào, {{ request.user.username }}!</p></a>
                     <a href="{% url 'create-items' %}">Create item</a>
                     <a href="{% url 'logout' %}">Đăng xuất</a>
                     {% else %}

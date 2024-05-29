@@ -1,9 +1,9 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
-from .forms import SignUpForm, ItemsForm ,ShippingAddressForm, PaymentForm
+from .forms import SignUpForm, ItemsForm, UserProfileForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
-from .models import Item, Topic, Message, Cart, CartItem, Order, OrderItem, Payment
+from .models import Item, Topic, Message, Cart, CartItem , UserProfile
 from django.conf import settings
 from django.contrib.auth import authenticate, login 
 from django.http import JsonResponse
@@ -13,7 +13,6 @@ from rest_framework import status
 from django.contrib.auth import authenticate, login
 from django.shortcuts import get_object_or_404
 from django.core.paginator import Paginator
-
 
 # views.py
 from django.shortcuts import render, redirect
@@ -302,78 +301,39 @@ def update_cart_item(request, pk):
 
 
 
-# @login_required(login_url='login')
-# def checkoutPage(request):
-
-#     cart_items = cart.items.all()
-#     context = {'cart_items' : cart_items}
-#     return render(request, 'shop/checkout.html')
-
-# @login_required(login_url='login')
-# def checkout(request):
-    cart = Cart.objects.get(user=request.user)
-    if request.method == 'POST':
-        shipping_form = ShippingAddressForm(request.POST)
-        payment_form = PaymentForm(request.POST)
-        
-        if shipping_form.is_valid() and payment_form.is_valid():
-            order = shipping_form.save(commit=False)
-            order.user = request.user
-            order.total_price = sum(item.total_price for item in cart.items.all())
-            order.save()
-
-            for cart_item in cart.items.all():
-                OrderItem.objects.create(
-                    order=order,
-                    item=cart_item.item,
-                    quantity=cart_item.quantity,
-                    price=cart_item.item.sale_price or cart_item.item.price
-                )
-
-            payment = payment_form.save(commit=False)
-            payment.order = order
-            payment.save()
-
-            # Xóa giỏ hàng sau khi đặt hàng thành công
-            cart.items.all().delete()
-
-            return redirect('order_success', order_id=order.id)
-
-    else:
-        shipping_form = ShippingAddressForm()
-        payment_form = PaymentForm()
-
-    context = {'shipping_form': shipping_form,
-                'payment_form': payment_form}
-
-    return render(request, 'shop/checkout.html', {
-        context
-    })
-
-
-
 @login_required(login_url='login')
-def checkout(request):
+def checkoutPage(request):
     cart = Cart.objects.get(user=request.user)
     cart_items = cart.items.all()
     subtotal = sum(item.total_price for item in cart_items)  # Tính tổng giá trị các mặt hàng trong giỏ hàng
 
-    shipping_form = ShippingAddressForm()
-    payment_form = PaymentForm()
+    # shipping_form = ShippingAddressForm()
+    # payment_form = PaymentForm()
 
     context = {
         'cart_items': cart_items,
         'subtotal': subtotal,
-        'shipping_form': shipping_form,
-        'payment_form': payment_form
+        # 'shipping_form': shipping_form,
+        # 'payment_form': payment_form
     }
 
     return render(request, 'shop/checkout.html', context)
 
 
-
 @login_required(login_url='login')
-def order_success(request, order_id):
-    order = Order.objects.get(id=order_id)
-    return render(request, 'order_success.html', {'order': order})
+def user_info(request):
+    user = request.user
+    profile, created = UserProfile.objects.get_or_create(user=user)
 
+    if request.method == 'POST':
+        form = UserProfileForm(request.POST, instance=profile)
+        if form.is_valid():
+            form.save()
+            print('Thay đổi thành công')
+            return redirect('user')
+        else:
+            print(form.errors)
+    else:
+        form = UserProfileForm(instance=profile)
+
+    return render(request, 'shop/user.html', {'form': form})

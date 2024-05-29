@@ -7,10 +7,10 @@ admin.site.register(Topic)
 admin.site.register(Message)
 admin.site.register(CartItem)
 admin.site.register(Cart)
-admin.site.register(Order)
-admin.site.register(OrderItem)
-admin.site.register(Payment)
-
+# admin.site.register(Order)
+# admin.site.register(OrderItem)
+# admin.site.register(Payment)
+admin.site.register(UserProfile)
 
 
 

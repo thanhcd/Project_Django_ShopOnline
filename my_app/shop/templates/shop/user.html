@@ -1,0 +1,137 @@
+{% extends 'main.html' %}
+
+{% block content %}
+
+<div class="container wrapper">
+    <div class="row cart-head">
+        <div class="container">
+            <div class="row">
+                <p></p>
+            </div>
+            <div class="row">
+                <div style="display: table; margin: auto;">
+                    <h3>Process checkout</h3>
+                </div>
+            </div>
+            <div class="row">
+                <p></p>
+            </div>
+        </div>
+    </div>
+    <div class="row cart-body">
+        <div class="form-horizontal">
+            {% csrf_token %}
+            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 col-md-push-6 col-sm-push-6">
+
+            </div>
+            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 col-md-pull-6 col-sm-pull-6">
+                <!--SHIPPING METHOD-->
+                <div class="panel panel-info">
+                    <div class="panel-heading">Address</div>
+                    <div class="panel-body">
+                        <form method="post" action="{% url 'user' %}" onsubmit="return validateForm()" name="profileForm">
+                            {% csrf_token %}
+                            <div class="form-group">
+                                <div class="col-md-12">
+                                    <h4>Shipping Address</h4>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-md-12"><strong>Country:</strong></div>
+                                <div class="col-md-12">
+                                    <input type="text" class="form-control" name="country"
+                                        value="{{ form.country.value|default:'' }}" />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-md-6 col-xs-12">
+                                    <strong>First Name:</strong>
+                                    <input type="text" name="first_name" class="form-control"
+                                        value="{{ form.first_name.value }}" />
+                                </div>
+                                <div class="span1"></div>
+                                <div class="col-md-6 col-xs-12">
+                                    <strong>Last Name:</strong>
+                                    <input type="text" name="last_name" class="form-control"
+                                        value="{{ form.last_name.value }}" />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-md-12"><strong>Address:</strong></div>
+                                <div class="col-md-12">
+                                    <input type="text" name="address" class="form-control"
+                                        value="{{ form.address.value }}" />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-md-12"><strong>City:</strong></div>
+                                <div class="col-md-12">
+                                    <input type="text" name="city" class="form-control" value="{{ form.city.value }}" />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-md-12"><strong>State:</strong></div>
+                                <div class="col-md-12">
+                                    <input type="text" name="state" class="form-control"
+                                        value="{{ form.state.value }}" />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-md-12"><strong>Zip / Postal Code:</strong></div>
+                                <div class="col-md-12">
+                                    <input type="text" name="postal_code" class="form-control"
+                                        value="{{ form.postal_code.value }}" />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-md-12"><strong>Phone Number:</strong></div>
+                                <div class="col-md-12"><input type="text" name="phone_number" class="form-control"
+                                        value="{{ form.phone_number.value }}" /></div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-md-12"><strong>Email Address:</strong></div>
+                                <div class="col-md-12"><input type="text" name="email" class="form-control"
+                                        value="{{ form.email.value }}" /></div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-md-12">
+                                    <button type="submit" class="btn btn-primary">Cập nhật thông tin</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="panel panel-info">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div style="margin-top:100px;">{% include 'shop/info_section.html'%}</div>
+
+<script>
+    function validateForm() {
+        var country = document.forms["profileForm"]["country"].value;
+        var firstName = document.forms["profileForm"]["first_name"].value;
+        var lastName = document.forms["profileForm"]["last_name"].value;
+        var address = document.forms["profileForm"]["address"].value;
+        var city = document.forms["profileForm"]["city"].value;
+        var state = document.forms["profileForm"]["state"].value;
+        var postalCode = document.forms["profileForm"]["postal_code"].value;
+        var phoneNumber = document.forms["profileForm"]["phone_number"].value;
+        var email = document.forms["profileForm"]["email"].value;
+
+        if (country == "" || firstName == "" || lastName == "" || address == "" || city == "" || state == "" || postalCode == "" || phoneNumber == "" || email == "") {
+            alert("Vui lòng điền đầy đủ thông tin.");
+            return false;
+        }
+
+        var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            alert("Vui lòng nhập địa chỉ email hợp lệ.");
+            return false;
+        }
+    }
+</script>
+{% endblock content %}
