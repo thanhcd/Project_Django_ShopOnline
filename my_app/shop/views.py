@@ -1,12 +1,11 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
-from .forms import SignUpForm, ItemsForm  ,CartItemUpdateForm
+from .forms import SignUpForm, ItemsForm ,ShippingAddressForm, PaymentForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
-from .models import Item, Topic, Message, Cart, CartItem
+from .models import Item, Topic, Message, Cart, CartItem, Order, OrderItem, Payment
 from django.conf import settings
-from django.contrib.auth import authenticate, login
-
+from django.contrib.auth import authenticate, login 
 from django.http import JsonResponse
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -281,16 +280,6 @@ def cart_deleteItem(request):
         return redirect('cart_detail')
     
 
-# @login_required(login_url='login')
-# def cart_updateItem(request, pk):
-#     if request.method == 'POST':
-#         cart_item = get_object_or_404(CartItem, id=pk, cart__user=request.user)
-#         quantity = request.POST.get('quantity')
-#         if quantity:
-#             cart_item.quantity = int(quantity)
-#             cart_item.save()
-#         print("lưu thành công")
-#         return redirect('cart_detail')
 
 def update_cart_item(request, pk):
     if request.method == 'POST':
@@ -311,16 +300,80 @@ def update_cart_item(request, pk):
         
     return redirect('cart_detail')
 
-# @login_required
-# def checkout(request):
-#     cart, created = Cart.objects.get_or_create(user=request.user)
-#     if request.method == 'POST':
-#         cart.items.all().delete()
-#         cart.delete()
-#         return redirect('checkout_success')
-#     return render(request, 'checkout.html', {'cart': cart})
 
-# @login_required
-# def checkout_success(request):
-#     return render(request, 'checkout_success.html')
+
+# @login_required(login_url='login')
+# def checkoutPage(request):
+
+#     cart_items = cart.items.all()
+#     context = {'cart_items' : cart_items}
+#     return render(request, 'shop/checkout.html')
+
+# @login_required(login_url='login')
+# def checkout(request):
+    cart = Cart.objects.get(user=request.user)
+    if request.method == 'POST':
+        shipping_form = ShippingAddressForm(request.POST)
+        payment_form = PaymentForm(request.POST)
+        
+        if shipping_form.is_valid() and payment_form.is_valid():
+            order = shipping_form.save(commit=False)
+            order.user = request.user
+            order.total_price = sum(item.total_price for item in cart.items.all())
+            order.save()
+
+            for cart_item in cart.items.all():
+                OrderItem.objects.create(
+                    order=order,
+                    item=cart_item.item,
+                    quantity=cart_item.quantity,
+                    price=cart_item.item.sale_price or cart_item.item.price
+                )
+
+            payment = payment_form.save(commit=False)
+            payment.order = order
+            payment.save()
+
+            # Xóa giỏ hàng sau khi đặt hàng thành công
+            cart.items.all().delete()
+
+            return redirect('order_success', order_id=order.id)
+
+    else:
+        shipping_form = ShippingAddressForm()
+        payment_form = PaymentForm()
+
+    context = {'shipping_form': shipping_form,
+                'payment_form': payment_form}
+
+    return render(request, 'shop/checkout.html', {
+        context
+    })
+
+
+
+@login_required(login_url='login')
+def checkout(request):
+    cart = Cart.objects.get(user=request.user)
+    cart_items = cart.items.all()
+    subtotal = sum(item.total_price for item in cart_items)  # Tính tổng giá trị các mặt hàng trong giỏ hàng
+
+    shipping_form = ShippingAddressForm()
+    payment_form = PaymentForm()
+
+    context = {
+        'cart_items': cart_items,
+        'subtotal': subtotal,
+        'shipping_form': shipping_form,
+        'payment_form': payment_form
+    }
+
+    return render(request, 'shop/checkout.html', context)
+
+
+
+@login_required(login_url='login')
+def order_success(request, order_id):
+    order = Order.objects.get(id=order_id)
+    return render(request, 'order_success.html', {'order': order})
 
