@@ -51,8 +51,8 @@
                 <button type="button" onclick="redirectToShop()">Continue Shopping</button>
             </div>
             <div class="cart-item-checkout">
-                <a href="{% url 'shop' %}"></a>
-                <button type="submit">Checkout</button>
+
+                <button type="button" onclick="redirectToCheckout()">Checkout</button>
             </div>
         </div>
     </div>
@@ -160,6 +160,10 @@
 <script>
     function redirectToShop() {
         window.location.href = "{% url 'shop' %}";
+    }
+
+    function redirectToCheckout() {
+        window.location.href = "{% url 'checkoutpage' %}";
     }
 </script>
 {% endblock %}

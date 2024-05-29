@@ -1,12 +1,11 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
-from .forms import SignUpForm, ItemsForm  ,CartItemUpdateForm
+from .forms import SignUpForm, ItemsForm, UserProfileForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
-from .models import Item, Topic, Message, Cart, CartItem
+from .models import Item, Topic, Message, Cart, CartItem , UserProfile
 from django.conf import settings
-from django.contrib.auth import authenticate, login
-
+from django.contrib.auth import authenticate, login 
 from django.http import JsonResponse
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -14,7 +13,6 @@ from rest_framework import status
 from django.contrib.auth import authenticate, login
 from django.shortcuts import get_object_or_404
 from django.core.paginator import Paginator
-
 
 # views.py
 from django.shortcuts import render, redirect
@@ -281,16 +279,6 @@ def cart_deleteItem(request):
         return redirect('cart_detail')
     
 
-# @login_required(login_url='login')
-# def cart_updateItem(request, pk):
-#     if request.method == 'POST':
-#         cart_item = get_object_or_404(CartItem, id=pk, cart__user=request.user)
-#         quantity = request.POST.get('quantity')
-#         if quantity:
-#             cart_item.quantity = int(quantity)
-#             cart_item.save()
-#         print("lưu thành công")
-#         return redirect('cart_detail')
 
 def update_cart_item(request, pk):
     if request.method == 'POST':
@@ -311,16 +299,41 @@ def update_cart_item(request, pk):
         
     return redirect('cart_detail')
 
-# @login_required
-# def checkout(request):
-#     cart, created = Cart.objects.get_or_create(user=request.user)
-#     if request.method == 'POST':
-#         cart.items.all().delete()
-#         cart.delete()
-#         return redirect('checkout_success')
-#     return render(request, 'checkout.html', {'cart': cart})
 
-# @login_required
-# def checkout_success(request):
-#     return render(request, 'checkout_success.html')
 
+@login_required(login_url='login')
+def checkoutPage(request):
+    cart = Cart.objects.get(user=request.user)
+    cart_items = cart.items.all()
+    subtotal = sum(item.total_price for item in cart_items)  # Tính tổng giá trị các mặt hàng trong giỏ hàng
+
+    # shipping_form = ShippingAddressForm()
+    # payment_form = PaymentForm()
+
+    context = {
+        'cart_items': cart_items,
+        'subtotal': subtotal,
+        # 'shipping_form': shipping_form,
+        # 'payment_form': payment_form
+    }
+
+    return render(request, 'shop/checkout.html', context)
+
+
+@login_required(login_url='login')
+def user_info(request):
+    user = request.user
+    profile, created = UserProfile.objects.get_or_create(user=user)
+
+    if request.method == 'POST':
+        form = UserProfileForm(request.POST, instance=profile)
+        if form.is_valid():
+            form.save()
+            print('Thay đổi thành công')
+            return redirect('user')
+        else:
+            print(form.errors)
+    else:
+        form = UserProfileForm(instance=profile)
+
+    return render(request, 'shop/user.html', {'form': form})
